@@ -2,14 +2,21 @@ module Component.App
   ( app
   ) where
 
+import Prelude
+
 import React.Basic (Component, JSX, Self, StateUpdate(..), createComponent, make)
 import React.Basic.DOM as H
+
+type Name = { name :: String, surname :: String }
+
+nameToString :: Name -> String
+nameToString { name, surname } = name <> ", " <> surname
 
 type Props =
   {}
 
 type State =
-  {}
+  { names :: Array Name }
 
 data Action
   = Noop
@@ -22,7 +29,12 @@ app = make component { initialState, render, update } {}
 
 initialState :: State
 initialState =
-  {}
+  { names:
+    [ { name: "Emil", surname: "Hans" }
+    , { name: "Mustermann", surname: "Max" }
+    , { name: "Tisch", surname: "Roman" }
+    ]
+  }
 
 render :: Self Props State Action -> JSX
 render self =
@@ -44,10 +56,7 @@ render self =
           , H.input {} ]
         , H.div_
           [ H.ul_
-            [ H.li_ [ H.text "Emil, Hans" ]
-            , H.li_ [ H.text "Mustermann, Max" ]
-            , H.li_ [ H.text "Tisch, Roman" ]
-            ]
+            (map (\n -> H.li_ [ H.text n ]) (map nameToString self.state.names))
           ]
         , H.div_
           [ H.label_
