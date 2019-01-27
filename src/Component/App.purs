@@ -82,36 +82,41 @@ render self =
     , H.div
       { className: "body"
       , children:
-        [ H.div_
-          [ H.text "Filter prefix:"
-          , H.input
-            { onChange:
-                capture
-                  self
-                  targetValue
-                  (\v -> EditQuery (fromMaybe "" v))
-            , value: self.state.query
-            }
-          ]
-        , H.div_
-          [ H.style_
-            [ H.text
-              ".is-selected { background-color: #0000ff; color: #ffffff; }"
+        [ H.div
+          { className: "name-list"
+          , children:
+            [ H.label_
+              [ H.span_ [ H.text "Filter prefix:" ]
+              , H.input
+                { onChange:
+                    capture
+                      self
+                      targetValue
+                      (\v -> EditQuery (fromMaybe "" v))
+                , value: self.state.query
+                }
+              ]
+            , H.div_
+              [ H.style_
+                [ H.text
+                  ".is-selected { background-color: #0000ff; color: #ffffff; }"
+                ]
+              , H.ul_
+                (Array.mapWithIndex
+                  (\index name ->
+                    H.li
+                    { className:
+                        if self.state.selected == Just index
+                        then "is-selected"
+                        else ""
+                    , children:
+                      [ H.text (nameToString name) ]
+                    , onClick: capture_ self (SelectName index)
+                    })
+                  (filterNames self.state.query self.state.names))
+              ]
             ]
-          , H.ul_
-            (Array.mapWithIndex
-              (\index name ->
-                H.li
-                { className:
-                    if self.state.selected == Just index
-                    then "is-selected"
-                    else ""
-                , children:
-                  [ H.text (nameToString name) ]
-                , onClick: capture_ self (SelectName index)
-                })
-              (filterNames self.state.query self.state.names))
-          ]
+          }
         , H.div_
           [ H.label_
             [ H.span_ [ H.text "Name:" ]
