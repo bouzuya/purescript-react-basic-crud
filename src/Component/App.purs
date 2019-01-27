@@ -3,7 +3,7 @@ module Component.App
   ) where
 
 import Data.Array as Array
-import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
 import Data.String as String
 import Prelude (map, (<>), (==), (||))
 import React.Basic (Component, JSX, Self, StateUpdate(..), capture, capture_, createComponent, make)
@@ -46,6 +46,7 @@ data Action
   | EditQuery String
   | EditSurname String
   | SelectName Int
+  | UpdateName
 
 component :: Component Props
 component = createComponent "App"
@@ -139,7 +140,11 @@ render self =
             { onClick: capture_ self CreateName
             , children: [ H.text "CREATE" ]
             }
-          , H.button_ [ H.text "UPDATE" ]
+          , H.button
+            { onClick: capture_ self UpdateName
+            , children: [ H.text "UPDATE" ]
+            , disabled: isNothing self.state.selected
+            }
           , H.button_ [ H.text "DELETE" ]
           ]
         ]
@@ -167,3 +172,16 @@ update self (SelectName index) =
         { edited = name
         , selected = Just index
         }
+update self UpdateName =
+  case self.state.selected of
+    Nothing -> NoUpdate
+    Just index ->
+      case Array.updateAt index self.state.edited self.state.names of
+        Nothing -> NoUpdate
+        Just updated ->
+          Update
+            self.state
+            { edited = emptyName
+            , names = updated
+            , selected = Nothing
+            }
