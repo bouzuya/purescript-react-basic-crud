@@ -42,6 +42,7 @@ type State =
 
 data Action
   = CreateName
+  | DeleteName
   | EditName String
   | EditQuery String
   | EditSurname String
@@ -145,7 +146,11 @@ render self =
             , children: [ H.text "UPDATE" ]
             , disabled: isNothing self.state.selected
             }
-          , H.button_ [ H.text "DELETE" ]
+          , H.button
+            { onClick: capture_ self DeleteName
+            , children: [ H.text "DELETE" ]
+            , disabled: isNothing self.state.selected
+            }
           ]
         ]
       }
@@ -157,6 +162,19 @@ render self =
 update :: Self Props State Action -> Action -> StateUpdate Props State Action
 update self CreateName =
   Update self.state { names = Array.snoc self.state.names self.state.edited }
+update self DeleteName =
+  case self.state.selected of
+    Nothing -> NoUpdate
+    Just index ->
+      case Array.deleteAt index self.state.names of
+        Nothing -> NoUpdate
+        Just deleted ->
+          Update
+            self.state
+            { edited = emptyName
+            , names = deleted
+            , selected = Nothing
+            }
 update self (EditName s) =
   Update self.state { edited = self.state.edited { name = s } }
 update self (EditQuery s) =
