@@ -3,23 +3,42 @@ module Component.App
   ) where
 
 import Prelude
+import Prelude
 
-import React.Basic (Component, JSX, Self, StateUpdate(..), createComponent, make)
+import Data.Array as Array
+import Data.Maybe (Maybe(..), fromMaybe)
+import Data.String as String
+import React.Basic (Component, JSX, Self, StateUpdate(..), capture, createComponent, make)
 import React.Basic.DOM as H
+import React.Basic.DOM.Events (targetValue)
 
 type Name = { name :: String, surname :: String }
 
 nameToString :: Name -> String
 nameToString { name, surname } = name <> ", " <> surname
 
+filterName :: String -> Name -> Boolean
+filterName "" _ = true
+filterName query { name, surname } =
+  let
+    pattern = String.Pattern query
+    startsWith p s = String.indexOf p s == Just 0
+  in
+    startsWith pattern name || startsWith pattern surname
+
+filterNames :: String -> Array Name -> Array Name
+filterNames query names = Array.filter (filterName query) names
+
 type Props =
   {}
 
 type State =
-  { names :: Array Name }
+  { names :: Array Name
+  , query :: String
+  }
 
 data Action
-  = Noop
+  = EditQuery String
 
 component :: Component Props
 component = createComponent "App"
@@ -34,6 +53,7 @@ initialState =
     , { name: "Mustermann", surname: "Max" }
     , { name: "Tisch", surname: "Roman" }
     ]
+  , query: ""
   }
 
 render :: Self Props State Action -> JSX
@@ -53,10 +73,22 @@ render self =
       , children:
         [ H.div_
           [ H.text "Filter prefix:"
-          , H.input {} ]
+          , H.input
+            { onChange:
+                capture
+                  self
+                  targetValue
+                  (\v -> EditQuery (fromMaybe "" v))
+            , value: self.state.query
+            }
+          ]
         , H.div_
           [ H.ul_
-            (map (\n -> H.li_ [ H.text n ]) (map nameToString self.state.names))
+            (map
+              (\n -> H.li_ [ H.text n ])
+              (map
+                nameToString
+                (filterNames self.state.query self.state.names)))
           ]
         , H.div_
           [ H.label_
@@ -81,4 +113,5 @@ render self =
   }
 
 update :: Self Props State Action -> Action -> StateUpdate Props State Action
-update self Noop = NoUpdate
+update self (EditQuery q) =
+  Update self.state { query = q }

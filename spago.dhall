@@ -8,6 +8,7 @@ You can edit this file as you like.
     [ "prelude"
     , "psci-support"
     , "react-basic"
+    , "strings"
     , "test-unit"
     ]
 , packages =
