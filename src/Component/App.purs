@@ -37,7 +37,7 @@ type State =
   { edited :: Name
   , names :: Array Name
   , query :: String
-  , selected :: Maybe Name
+  , selected :: Maybe Int
   }
 
 data Action
@@ -45,7 +45,7 @@ data Action
   | EditName String
   | EditQuery String
   | EditSurname String
-  | SelectName Name
+  | SelectName Int
 
 component :: Component Props
 component = createComponent "App"
@@ -97,16 +97,16 @@ render self =
               ".is-selected { background-color: #0000ff; color: #ffffff; }"
             ]
           , H.ul_
-            (map
-              (\name ->
+            (Array.mapWithIndex
+              (\index name ->
                 H.li
                 { className:
-                    if self.state.selected == Just name
+                    if self.state.selected == Just index
                     then "is-selected"
                     else ""
                 , children:
                   [ H.text (nameToString name) ]
-                , onClick: capture_ self (SelectName name)
+                , onClick: capture_ self (SelectName index)
                 })
               (filterNames self.state.query self.state.names))
           ]
@@ -158,9 +158,12 @@ update self (EditQuery s) =
   Update self.state { query = s }
 update self (EditSurname s) =
   Update self.state { edited = self.state.edited { surname = s } }
-update self (SelectName n) =
-  Update
-    self.state
-    { edited = n
-    , selected = Just n
-    }
+update self (SelectName index) =
+  case Array.index self.state.names index of
+    Nothing -> NoUpdate
+    Just name ->
+      Update
+        self.state
+        { edited = name
+        , selected = Just index
+        }
