@@ -41,7 +41,8 @@ type State =
   }
 
 data Action
-  = EditName String
+  = CreateName
+  | EditName String
   | EditQuery String
   | EditSurname String
   | SelectName Name
@@ -134,7 +135,10 @@ render self =
             ]
           ]
         , H.div_
-          [ H.button_ [ H.text "CREATE" ]
+          [ H.button
+            { onClick: capture_ self CreateName
+            , children: [ H.text "CREATE" ]
+            }
           , H.button_ [ H.text "UPDATE" ]
           , H.button_ [ H.text "DELETE" ]
           ]
@@ -146,6 +150,8 @@ render self =
   }
 
 update :: Self Props State Action -> Action -> StateUpdate Props State Action
+update self CreateName =
+  Update self.state { names = Array.snoc self.state.names self.state.edited }
 update self (EditName s) =
   Update self.state { edited = self.state.edited { name = s } }
 update self (EditQuery s) =
