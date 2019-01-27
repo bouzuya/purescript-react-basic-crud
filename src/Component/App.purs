@@ -161,7 +161,12 @@ render self =
 
 update :: Self Props State Action -> Action -> StateUpdate Props State Action
 update self CreateName =
-  Update self.state { names = Array.snoc self.state.names self.state.edited }
+  Update
+    self.state
+      { edited = emptyName
+      , names = Array.snoc self.state.names self.state.edited
+      , selected = Nothing
+      }
 update self DeleteName =
   case self.state.selected of
     Nothing -> NoUpdate
@@ -171,10 +176,10 @@ update self DeleteName =
         Just deleted ->
           Update
             self.state
-            { edited = emptyName
-            , names = deleted
-            , selected = Nothing
-            }
+              { edited = emptyName
+              , names = deleted
+              , selected = Nothing
+              }
 update self (EditName s) =
   Update self.state { edited = self.state.edited { name = s } }
 update self (EditQuery s) =
@@ -187,9 +192,9 @@ update self (SelectName index) =
     Just name ->
       Update
         self.state
-        { edited = name
-        , selected = Just index
-        }
+          { edited = name
+          , selected = Just index
+          }
 update self UpdateName =
   case self.state.selected of
     Nothing -> NoUpdate
@@ -199,7 +204,7 @@ update self UpdateName =
         Just updated ->
           Update
             self.state
-            { edited = emptyName
-            , names = updated
-            , selected = Nothing
-            }
+              { edited = emptyName
+              , names = updated
+              , selected = Nothing
+              }
