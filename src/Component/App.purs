@@ -8,7 +8,7 @@ import Prelude
 import Data.Array as Array
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String as String
-import React.Basic (Component, JSX, Self, StateUpdate(..), capture, createComponent, make)
+import React.Basic (Component, JSX, Self, StateUpdate(..), capture, capture_, createComponent, make)
 import React.Basic.DOM as H
 import React.Basic.DOM.Events (targetValue)
 
@@ -35,10 +35,12 @@ type Props =
 type State =
   { names :: Array Name
   , query :: String
+  , selected :: Maybe Name
   }
 
 data Action
   = EditQuery String
+  | SelectName Name
 
 component :: Component Props
 component = createComponent "App"
@@ -54,6 +56,7 @@ initialState =
     , { name: "Tisch", surname: "Roman" }
     ]
   , query: ""
+  , selected: Nothing
   }
 
 render :: Self Props State Action -> JSX
@@ -83,12 +86,23 @@ render self =
             }
           ]
         , H.div_
-          [ H.ul_
+          [ H.style_
+            [ H.text
+              ".is-selected { background-color: #0000ff; color: #ffffff; }"
+            ]
+          , H.ul_
             (map
-              (\n -> H.li_ [ H.text n ])
-              (map
-                nameToString
-                (filterNames self.state.query self.state.names)))
+              (\name ->
+                H.li
+                { className:
+                    if self.state.selected == Just name
+                    then "is-selected"
+                    else ""
+                , children:
+                  [ H.text (nameToString name) ]
+                , onClick: capture_ self (SelectName name)
+                })
+              (filterNames self.state.query self.state.names))
           ]
         , H.div_
           [ H.label_
@@ -115,3 +129,5 @@ render self =
 update :: Self Props State Action -> Action -> StateUpdate Props State Action
 update self (EditQuery q) =
   Update self.state { query = q }
+update self (SelectName n) =
+  Update self.state { selected = Just n }
