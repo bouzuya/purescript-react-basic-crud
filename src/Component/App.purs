@@ -15,6 +15,7 @@ type Name = { name :: String, surname :: String }
 emptyName :: Name
 emptyName = { name: "", surname: "" }
 
+-- TODO: case sensitive ?
 filterName :: String -> Name -> Boolean
 filterName "" _ = true
 filterName query { name, surname } =
@@ -165,7 +166,7 @@ render self =
   }
 
 update :: Self Props State Action -> Action -> StateUpdate Props State Action
-update self CreateName =
+update self CreateName = -- TODO: allow empty?
   Update
     self.state
       { edited = emptyName
@@ -200,7 +201,7 @@ update self (SelectName index) =
           { edited = name
           , selected = Just index
           }
-update self UpdateName =
+update self UpdateName = -- TODO: allow empty?
   case self.state.selected of
     Nothing -> NoUpdate
     Just index ->
