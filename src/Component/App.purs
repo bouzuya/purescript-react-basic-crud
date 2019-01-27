@@ -37,7 +37,35 @@ render self =
         ]
       }
     , H.div
-      { className: "body" }
+      { className: "body"
+      , children:
+        [ H.div_
+          [ H.text "Filter prefix:"
+          , H.input {} ]
+        , H.div_
+          [ H.ul_
+            [ H.li_ [ H.text "Emil, Hans" ]
+            , H.li_ [ H.text "Mustermann, Max" ]
+            , H.li_ [ H.text "Tisch, Roman" ]
+            ]
+          ]
+        , H.div_
+          [ H.label_
+            [ H.span_ [ H.text "Name:" ]
+            , H.input {}
+            ]
+          , H.label_
+            [ H.span_ [ H.text "Surname:" ]
+            , H.input {}
+            ]
+          ]
+        , H.div_
+          [ H.button_ [ H.text "CREATE" ]
+          , H.button_ [ H.text "UPDATE" ]
+          , H.button_ [ H.text "DELETE" ]
+          ]
+        ]
+      }
     , H.div
       { className: "footer" }
     ]
