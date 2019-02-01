@@ -2,6 +2,7 @@ module Component.App
   ( app
   ) where
 
+import Component.AppStyle as Style
 import Data.Array as Array
 import Data.Maybe (Maybe(..), fromMaybe, isJust, isNothing)
 import Data.String as String
@@ -76,88 +77,119 @@ render self =
     [ H.div
       { className: "header"
       , children:
-        [ H.h1_
-          [ H.text "CRUD" ]
+        [ H.h1
+          { className: Style.title
+          , children: [ H.text "CRUD" ]
+          }
         ]
       }
     , H.div
-      { className: "body"
+      { className: Style.body
       , children:
         [ H.div
-          { className: "name-list"
+          { className: Style.list
           , children:
-            [ H.label_
-              [ H.span_ [ H.text "Filter prefix:" ]
-              , H.input
-                { onChange:
-                    capture
-                      self
-                      targetValue
-                      (\v -> EditQuery (fromMaybe "" v))
-                , value: self.state.query
-                }
-              ]
-            , H.div_
-              [ H.style_
-                [ H.text
-                  ".is-selected { background-color: #0000ff; color: #ffffff; }"
+            [ H.label
+              { className: Style.filter
+              , children:
+                [ H.span
+                  { className: Style.filterLabel
+                  , children: [ H.text "Filter prefix:" ]
+                  }
+                , H.input
+                  { className: Style.filterValue
+                  , onChange:
+                      capture
+                        self
+                        targetValue
+                        (\v -> EditQuery (fromMaybe "" v))
+                  , value: self.state.query
+                  }
                 ]
-              , H.ul_
-                (Array.mapWithIndex
-                  (\index name ->
-                    H.li
-                    { className:
-                        if self.state.selected == Just index
-                        then "is-selected"
-                        else ""
-                    , children:
-                      [ H.text (nameToString name) ]
-                    , onClick: capture_ self (SelectName index)
-                    })
-                  (filterNames self.state.query self.state.names))
+              }
+            , H.div_
+              [ H.ul
+                { className: Style.nameList
+                , children:
+                  (Array.mapWithIndex
+                    (\index name ->
+                      H.li
+                      { className:
+                          if self.state.selected == Just index
+                          then "is-selected"
+                          else ""
+                      , children:
+                        [ H.text (nameToString name) ]
+                      , onClick: capture_ self (SelectName index)
+                      })
+                    (filterNames self.state.query self.state.names))
+                }
               ]
             ]
           }
-        , H.div_
-          [ H.label_
-            [ H.span_ [ H.text "Name:" ]
-            , H.input
-              { onChange:
-                  capture
-                    self
-                    targetValue
-                    (\v -> EditName (fromMaybe "" v))
-              , value: self.state.edited.name
+        , H.div
+          { className: Style.form
+          , children:
+            [ H.label
+              { className: Style.field
+              , children:
+                [ H.span
+                  { className: Style.label
+                  , children: [ H.text "Name:" ]
+                  }
+                , H.input
+                  { className: Style.value
+                  , onChange:
+                      capture
+                        self
+                        targetValue
+                        (\v -> EditName (fromMaybe "" v))
+                  , value: self.state.edited.name
+                  }
+                ]
+              }
+            , H.label
+              { className: Style.field
+              , children:
+                [ H.span
+                  { className: Style.label
+                  , children: [ H.text "Surname:" ]
+                  }
+                , H.input
+                  { className: Style.value
+                  , onChange:
+                      capture
+                        self
+                        targetValue
+                        (\v -> EditSurname (fromMaybe "" v))
+                  , value: self.state.edited.surname
+                  }
+                ]
               }
             ]
-          , H.label_
-            [ H.span_ [ H.text "Surname:" ]
-            , H.input
-              { onChange:
-                  capture
-                    self
-                    targetValue
-                    (\v -> EditSurname (fromMaybe "" v))
-              , value: self.state.edited.surname
+          }
+        , H.div
+          { className: Style.buttonBar
+          , children:
+            [ H.button
+              { className: Style.button
+              , children: [ H.text "CREATE" ]
+              , onClick: capture_ self CreateName
+              }
+            , H.button
+              { className: Style.button
+              , children: [ H.text "UPDATE" ]
+              , disabled: isNothing self.state.selected
+              , onClick: capture_ self UpdateName
+              }
+            , H.button
+              { className: Style.button
+              , children: [ H.text "DELETE" ]
+              , disabled: isNothing self.state.selected
+              , onClick: capture_ self DeleteName
               }
             ]
-          ]
-        , H.div_
-          [ H.button
-            { onClick: capture_ self CreateName
-            , children: [ H.text "CREATE" ]
-            }
-          , H.button
-            { onClick: capture_ self UpdateName
-            , children: [ H.text "UPDATE" ]
-            , disabled: isNothing self.state.selected
-            }
-          , H.button
-            { onClick: capture_ self DeleteName
-            , children: [ H.text "DELETE" ]
-            , disabled: isNothing self.state.selected
-            }
-          ]
+          }
         ]
       }
     , H.div

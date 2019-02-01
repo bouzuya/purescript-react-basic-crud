@@ -1,0 +1,100 @@
+:global(html),
+:global(body) {
+  margin: 0;
+  padding: 0;
+}
+
+:global(.is-selected) {
+ background-color: #00f;
+ color: #fff;
+}
+
+.title {
+  font-size: 100%;
+  text-align: center;
+}
+
+.body {
+  background-color: #eee;
+  border-radius: 4px;
+  border: 1px solid #333;
+  box-sizing: border-box;
+  height: 240px;
+  margin: 0 auto;
+  padding: 8px 16px;
+  position: relative;
+  width: 480px;
+}
+
+.list {
+  width: 50%;
+}
+
+.filter {
+  display: block;
+  height: 28px;
+  position: relative;
+}
+
+.filter-label {
+  display: inline;
+}
+
+.filter-value {
+  border: 1px solid #333;
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 25%;
+}
+
+.name-list {
+  background-color: #fff;
+  border: 1px solid #333;
+  height: 148px;
+  list-style-type: none;
+  margin: 0;
+  padding: 4px;
+}
+
+.form {
+  display: block;
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 50%;
+}
+
+.field {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-end;
+  padding: 4px 16px;
+  width: 100%;
+}
+
+.label {
+  text-align: left;
+  width: 50%;
+}
+
+.value {
+  border: 1px solid #333;
+  width: 50%;
+}
+
+.button-bar {
+  bottom: 8px;
+  display: block;
+  position: absolute;
+  width: 100%;
+}
+
+.button {
+  border-radius: 4px;
+  border: 1px solid #333;
+  height: 24px;
+  margin: 0 16px 0 0;
+  width: 25%;
+}
